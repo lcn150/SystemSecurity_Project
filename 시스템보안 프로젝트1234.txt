@@ -1,0 +1,102 @@
+import random
+import string
+import hashlib
+
+class Contact:  #사용자 데이터베이스
+    def __init__(self, ID, passwd):   #생성자
+        self.ID = ID
+        self.passwd = passwd
+
+    def print_info(self):  #마스터 비밀번호를 입력했을 때 -> 비밀번호의 해시값 출력
+        self.encoded_string = self.passwd.encode()
+        self.hexdigest = hashlib.sha256(self.encoded_string).hexdigest()
+        print("비밀번호의 해시값 : " + self.hexdigest)
+        
+def set_contact():  #1번 사용자계정 입력
+    master_passwd = int(1234)   #사용자계정 입력을 선택하자마자 마스터 비밀번호는 1234로 초기화
+    ID = input("ID : ")
+    passwd = int(input("Passwd : "))
+    passwd = master_passwd ^ passwd  #2. 입력받은 패스워드는 마스터비밀번호와 XOR연산후 저장
+    passwd = str(passwd)    #비밀번호는 String의 형태로 저장
+    contact = Contact(ID, passwd)    #1명의 아이디와 비밀번호 저장
+    return contact
+
+def print_menu():   #메뉴판 출력
+    print("1. 사용자 계정 입력")
+    print("2. 마스터 비밀번호 입력")
+    print("3. 종료")
+    menu = input("메뉴선택: ")
+    return int(menu)
+
+def print_contact(contact_list):  #2번 마스터 비밀번호 입력
+    master_passwd =  input("마스터 비밀번호 입력 : ")
+    if master_passwd == '1234':   #마스터 비밀번호가 1234가 맞으면
+        for contact in contact_list:
+            contact.print_info()  #모든 사용자의 해시된 비밀번호 출력
+    elif master_passwd !=1234:
+        print("마스터 비밀번호가 잘못되었습니다")
+        
+def Second():   #1번,2번
+    # 주소록 리스트
+    contact_list = []
+
+    while 1:
+        menu = print_menu()    #메뉴판에서 값 받아서
+        if menu == 1:     #사용자 계정 입력
+            contact = set_contact()
+            contact_list.append(contact)
+        elif menu == 2:   #마스터비밀번호 입력
+            print_contact(contact_list)
+        elif menu == 3:   #종료
+            break
+
+
+def Third():   #3. 난수 생성기를 이용하여 안전한 비밀번호를 추천하시오.
+    total = int(input('비밀번호 길이 입력 : '))
+    upper = int(input('대문자 개수 입력 : '))
+    lower = int(input('소문자 개수 입력 : '))
+    num = int(input('숫자 개수 입력 : '))
+    spe = int(input('특수문자 입력 : '))
+
+    pw1 = "".join([random.choice(string.ascii_uppercase) for i in range(upper)]) # 대문자 중 랜덤 초이스
+    pw2 = "".join([random.choice(string.ascii_lowercase) for i in range(lower)]) # 소문자 중 랜덤 초이스
+    pw3 = "".join([random.choice(string.digits) for i in range(num)]) # 숫자 중 랜덤 초이스
+    pw4 = "".join([random.choice(string.punctuation) for i in range(spe)]) #특수문자 중 랜덤 초이스
+    pw5 = list(pw1+pw2+pw3+pw4)   #선택받은 문자열을 합한다
+
+    random.shuffle(pw5)     # 그 문자열을 섞는다
+
+    print(''.join(pw5))     #출력
+
+
+def Fourth(): #4. 3자리 숫자/소문자/대문자로 생성한 해시값 (SHA256)을 통해 3자리 숫자/소문자/대문자를 찾는 기능을 제공하시오.
+    while 1:
+      str1 = input("3자리 문자(숫자, 소문자, 대문자 조합)를 입력하세요 : ")
+
+      if(len(str1) != 3) :
+        print('3자리 문자가 아닙니다.')
+        continue
+      else :
+        break
+
+    arr = ['0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+
+    encoded_string = str1.encode()
+    hexdigest = hashlib.sha256(encoded_string).hexdigest()    #문자열로 해시값 생성
+    print('해시값 : ',hexdigest)     #해시값
+    for i in arr:
+      for j in arr:
+        for k in arr:
+          str2 = i+j+k;
+          encoded_string2 = str2.encode()
+          hexdigest2 = hashlib.sha256(encoded_string2).hexdigest()
+          if(hexdigest == hexdigest2) :
+            print('원본 : ',str2)
+            break
+
+
+if __name__ == '__main__':
+   number = int(input("Choose your number(2,3,4) : "))
+   if(number==2):Second()
+   elif(number==3):Third()
+   elif(number==4):Fourth()
